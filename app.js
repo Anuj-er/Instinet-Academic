@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 
 const app = express();
 
+
 // Middleware
 app.use(morgan('dev'));
 app.use(helmet({
