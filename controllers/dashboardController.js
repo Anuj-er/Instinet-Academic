@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Course = require('../models/courses');
+const Announcement = require('../models/Announcement');
 
 exports.getAdminDashboard = async (req, res) => {
   try {
@@ -9,16 +10,25 @@ exports.getAdminDashboard = async (req, res) => {
     const staff = users.filter(user => user.role === 'staff').length;
     const courses = await Course.countDocuments();
 
+    // Fetch announcements for display on dashboard
+    const announcements = await Announcement.find()
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'firstName lastName role')
+      .limit(10)
+      .lean();
+
     res.render('adminDashboard', { 
       title: 'Admin Dashboard', 
       user: req.user, 
       users,
+      announcements,
       stats: {
         totalUsers,
         students,
         staff,
         courses
-      }
+      },
+      path: req.path
     });
   } catch (error) {
     console.error('Error in getAdminDashboard:', error);
@@ -37,10 +47,19 @@ exports.getStaffDashboard = async (req, res) => {
         student.courses = [];
       }
     }
+    
+    // Fetch announcements for display on dashboard
+    const announcements = await Announcement.find()
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'firstName lastName role')
+      .limit(10)
+      .lean();
+    
     res.render('staffDashboard', {
       title: 'Staff Dashboard',
       user: req.user,
       students,
+      announcements,
       error: req.flash('error'),
       success: req.flash('success'),
       path: req.path
@@ -55,9 +74,19 @@ exports.getStaffDashboard = async (req, res) => {
 exports.getStudentDashboard = async (req, res) => {
   const department = req.user.studentDetails?.department;
   const courses = await Course.find({ department }).limit(4);
+  
+  // Fetch announcements for display on dashboard
+  const announcements = await Announcement.find()
+    .sort({ createdAt: -1 })
+    .populate('createdBy', 'firstName lastName role')
+    .limit(10)
+    .lean();
+  
   res.render('studentDashboard', {
     title: 'Student Dashboard',
     user: req.user,
-    courses
+    courses,
+    announcements,
+    path: req.path
   });
 }; 

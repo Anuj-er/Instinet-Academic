@@ -1,86 +1,198 @@
-<%- include('partials/header') %>
-<div class="dashboard-wrapper d-flex">
-  <%- include('partials/sidebar', { user: user }) %>
-  <main class="main-content flex-grow-1 d-flex justify-content-center align-items-start" style="background: #f8f9fb; min-height: 100vh;">
-    <div class="w-100" style="max-width: 600px; min-width: 320px; min-height: 400px; margin: 7rem auto 0 auto;">
-      <div class="card shadow rounded-4">
-        <div class="card-header d-flex justify-content-between align-items-center bg-white border-bottom-0" style="padding-bottom: 0;">
-          <h3 class="mb-0">My Profile</h3>
-          <a href="/profile/edit" class="btn btn-primary btn-sm">Edit Profile</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - InstiNet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <%- include('./partials/header', {user: user}) %>
+    
+    <div class="dashboard-layout">
+        <%- include('./partials/sidebar', {user: user}) %>
+        
+        <div class="dashboard-content">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">My Profile</h1>
+                <div class="dashboard-actions">
+                    <a href="/profile/edit" class="btn btn-primary"><i class="fas fa-edit"></i> Edit Profile</a>
+                </div>
+            </div>
+            
+            <div class="profile-container">
+                <!-- Profile Header Card -->
+                <div class="profile-header-card">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large">
+                            <%= user.firstName.charAt(0) %><%= user.lastName.charAt(0) %>
+                        </div>
+                        <div class="profile-header-info">
+                            <h2 class="profile-name"><%= user.firstName %> <%= user.lastName %></h2>
+                            <p class="profile-email"><i class="fas fa-envelope"></i> <%= user.email %></p>
+                            <span class="badge badge-<%= user.role %>"><%= user.role %></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <% if (subtle && subtle.length > 0) { %>
+                    <div class="alert-success"><i class="fas fa-check-circle"></i> <%= subtle %></div>
+                <% } %>
+                <% if (incomplete) { %>
+                    <div class="alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Profile Incomplete!</strong> Please complete: <%= missingFields.join(', ') %>
+                    </div>
+                <% } %>
+                
+                <!-- Personal Information -->
+                <div class="profile-section">
+                    <div class="profile-section-header">
+                        <h3 class="profile-section-title"><i class="fas fa-user"></i> Personal Information</h3>
+                    </div>
+                    <div class="profile-grid">
+                        <div class="profile-field">
+                            <label>Phone Number</label>
+                            <div class="profile-value"><%= user.phoneNumber || '-' %></div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Gender</label>
+                            <div class="profile-value"><%= user.gender || '-' %></div>
+                        </div>
+                        <div class="profile-field">
+                            <label>Date of Birth</label>
+                            <div class="profile-value"><%= user.dateOfBirth ? new Date(user.dateOfBirth).toLocaleDateString() : '-' %></div>
+                        </div>
+                        <div class="profile-field profile-field-full">
+                            <label>Address</label>
+                            <div class="profile-value">
+                                <% if (user.address?.street || user.address?.city) { %>
+                                    <%= user.address?.street || '' %><% if (user.address?.street && user.address?.city) { %>, <% } %><%= user.address?.city || '' %><% if ((user.address?.street || user.address?.city) && user.address?.state) { %>, <% } %><%= user.address?.state || '' %><% if ((user.address?.street || user.address?.city || user.address?.state) && user.address?.country) { %>, <% } %><%= user.address?.country || '' %><% if (user.address?.zipCode) { %> - <%= user.address?.zipCode %><% } %>
+                                <% } else { %>
+                                    -
+                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <% if (user.role === 'student') { %>
+                    <div class="profile-section">
+                        <div class="profile-section-header">
+                            <h3 class="profile-section-title"><i class="fas fa-graduation-cap"></i> Student Details</h3>
+                        </div>
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <label>Enrollment Number</label>
+                                <div class="profile-value"><%= user.studentDetails?.enrollmentNumber || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Course</label>
+                                <div class="profile-value"><%= user.studentDetails?.courseName || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Department</label>
+                                <div class="profile-value"><%= user.studentDetails?.department || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Year</label>
+                                <div class="profile-value"><%= user.studentDetails?.year || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Semester</label>
+                                <div class="profile-value"><%= user.studentDetails?.semester || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Guardian Name</label>
+                                <div class="profile-value"><%= user.studentDetails?.guardianName || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Guardian Contact</label>
+                                <div class="profile-value"><%= user.studentDetails?.guardianContact || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Hostel Resident</label>
+                                <div class="profile-value"><%= user.studentDetails?.isHostelResident ? 'Yes' : 'No' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Scholarship</label>
+                                <div class="profile-value"><%= user.studentDetails?.hasScholarship ? 'Yes' : 'No' %></div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <% if (user.role === 'staff') { %>
+                    <div class="profile-section">
+                        <div class="profile-section-header">
+                            <h3 class="profile-section-title"><i class="fas fa-chalkboard-teacher"></i> Staff Details</h3>
+                        </div>
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <label>Employee ID</label>
+                                <div class="profile-value"><%= user.staffDetails?.employeeId || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Department</label>
+                                <div class="profile-value"><%= user.staffDetails?.department || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Designation</label>
+                                <div class="profile-value"><%= user.staffDetails?.designation || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Date of Joining</label>
+                                <div class="profile-value"><%= user.staffDetails?.dateOfJoining ? new Date(user.staffDetails.dateOfJoining).toLocaleDateString() : '-' %></div>
+                            </div>
+                            <div class="profile-field profile-field-full">
+                                <label>Subjects Assigned</label>
+                                <div class="profile-value"><%= user.staffDetails?.subjectsAssigned?.join(', ') || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Salary</label>
+                                <div class="profile-value"><%= user.staffDetails?.salary || '-' %></div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+                
+                <% if (user.role === 'admin') { %>
+                    <div class="profile-section">
+                        <div class="profile-section-header">
+                            <h3 class="profile-section-title"><i class="fas fa-user-shield"></i> Admin Details</h3>
+                        </div>
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <label>Employee ID</label>
+                                <div class="profile-value"><%= user.adminDetails?.employeeId || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Department</label>
+                                <div class="profile-value"><%= user.adminDetails?.department || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Office Room</label>
+                                <div class="profile-value"><%= user.adminDetails?.officeRoomNumber || '-' %></div>
+                            </div>
+                            <div class="profile-field">
+                                <label>Access Level</label>
+                                <div class="profile-value"><%= user.adminDetails?.accessLevel || '-' %></div>
+                            </div>
+                            <div class="profile-field profile-field-full">
+                                <label>Responsibilities</label>
+                                <div class="profile-value"><%= user.adminDetails?.responsibilities?.join(', ') || '-' %></div>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
         </div>
-        <div class="card-body overflow-auto">
-          <% if (subtle && subtle.length > 0) { %>
-            <div class="text-success mb-2" style="font-size: 1rem;"><%= subtle %></div>
-          <% } %>
-          <% if (incomplete) { %>
-            <div class="text-warning mb-2" style="font-size: 1rem;">
-              <strong>Your profile is incomplete!</strong>
-              Please complete: <%= missingFields.join(', ') %>
-            </div>
-          <% } %>
-          <div class="row row-cols-1 row-cols-md-2 g-3">
-            <div class="col">
-              <strong>Name:</strong> <%= user.firstName %> <%= user.lastName %>
-            </div>
-            <div class="col">
-              <strong>Email:</strong> <%= user.email %>
-            </div>
-            <div class="col">
-              <strong>Phone:</strong> <%= user.phoneNumber || '-' %>
-            </div>
-            <div class="col">
-              <strong>Gender:</strong> <%= user.gender || '-' %>
-            </div>
-            <div class="col">
-              <strong>Date of Birth:</strong> <%= user.dateOfBirth ? user.dateOfBirth.toISOString().substring(0,10) : '-' %>
-            </div>
-            <div class="col">
-              <strong>Role:</strong> <span class="badge bg-info text-dark"><%= user.role %></span>
-            </div>
-            <div class="col-12">
-              <strong>Address:</strong>
-              <%= user.address?.street || '' %> <%= user.address?.city || '' %> <%= user.address?.state || '' %> <%= user.address?.country || '' %> <%= user.address?.zipCode || '' %>
-            </div>
-          </div>
-          <% if (user.role === 'student') { %>
-            <hr>
-            <h5>Student Details</h5>
-            <div class="row row-cols-1 row-cols-md-2 g-3">
-              <div class="col"><strong>Enrollment Number:</strong> <%= user.studentDetails?.enrollmentNumber || '-' %></div>
-              <div class="col"><strong>Course:</strong> <%= user.studentDetails?.courseName || '-' %></div>
-              <div class="col"><strong>Department:</strong> <%= user.studentDetails?.department || '-' %></div>
-              <div class="col"><strong>Year/Semester:</strong> <%= user.studentDetails?.year || '-' %> / <%= user.studentDetails?.semester || '-' %></div>
-              <div class="col"><strong>Guardian Name:</strong> <%= user.studentDetails?.guardianName || '-' %></div>
-              <div class="col"><strong>Guardian Contact:</strong> <%= user.studentDetails?.guardianContact || '-' %></div>
-              <div class="col"><strong>Hostel Resident:</strong> <%= user.studentDetails?.isHostelResident ? 'Yes' : 'No' %></div>
-              <div class="col"><strong>Scholarship:</strong> <%= user.studentDetails?.hasScholarship ? 'Yes' : 'No' %></div>
-            </div>
-          <% } %>
-          <% if (user.role === 'staff') { %>
-            <hr>
-            <h5>Staff Details</h5>
-            <div class="row row-cols-1 row-cols-md-2 g-3">
-              <div class="col"><strong>Employee ID:</strong> <%= user.staffDetails?.employeeId || '-' %></div>
-              <div class="col"><strong>Department:</strong> <%= user.staffDetails?.department || '-' %></div>
-              <div class="col"><strong>Designation:</strong> <%= user.staffDetails?.designation || '-' %></div>
-              <div class="col"><strong>Date of Joining:</strong> <%= user.staffDetails?.dateOfJoining ? user.staffDetails.dateOfJoining.toISOString().substring(0,10) : '-' %></div>
-              <div class="col"><strong>Subjects Assigned:</strong> <%= user.staffDetails?.subjectsAssigned?.join(', ') || '-' %></div>
-              <div class="col"><strong>Salary:</strong> <%= user.staffDetails?.salary || '-' %></div>
-            </div>
-          <% } %>
-          <% if (user.role === 'admin') { %>
-            <hr>
-            <h5>Admin Details</h5>
-            <div class="row row-cols-1 row-cols-md-2 g-3">
-              <div class="col"><strong>Employee ID:</strong> <%= user.adminDetails?.employeeId || '-' %></div>
-              <div class="col"><strong>Department:</strong> <%= user.adminDetails?.department || '-' %></div>
-              <div class="col"><strong>Office Room Number:</strong> <%= user.adminDetails?.officeRoomNumber || '-' %></div>
-              <div class="col"><strong>Access Level:</strong> <%= user.adminDetails?.accessLevel || '-' %></div>
-              <div class="col-12"><strong>Responsibilities:</strong> <%= user.adminDetails?.responsibilities?.join(', ') || '-' %></div>
-            </div>
-          <% } %>
-        </div>
-      </div>
     </div>
-  </main>
-</div> 
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="/js/main.js"></script>
+</body>
+</html> 

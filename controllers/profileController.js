@@ -42,7 +42,8 @@ exports.getProfile = async (req, res) => {
     incomplete,
     missingFields,
     success: req.flash('success'),
-    subtle: req.flash('subtle')
+    subtle: req.flash('subtle'),
+    path: req.path
   });
 };
 
@@ -53,7 +54,8 @@ exports.editProfile = async (req, res) => {
     title: 'Edit Profile',
     user,
     error: req.flash('error'),
-    subtle: req.flash('subtle')
+    subtle: req.flash('subtle'),
+    path: req.path
   });
 };
 

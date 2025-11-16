@@ -11,48 +11,48 @@
     <nav class="sidebar-nav">
         <ul>
             <% if (user.role === 'admin') { %>
-                <li><a href="/adminDashboard" class="<%= title === 'Dashboard' ? 'active' : '' %>">
+                <li><a href="<%= path === '/adminDashboard' ? '#' : '/adminDashboard' %>" class="<%= title === 'Dashboard' || title === 'Admin Dashboard' ? 'active' : '' %>">
                     <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                 </a></li>
-                <li><a href="#users-section" class="<%= title === 'Users' ? 'active' : '' %>">
+                <li><a href="<%= path === '/adminDashboard' ? '#users-section' : '/adminDashboard#users-section' %>" class="<%= title === 'Users' ? 'active' : '' %>">
                     <i class="fas fa-users"></i> <span>Users</span>
                 </a></li>
-                <li><a href="#courses-section" class="<%= title === 'Courses' ? 'active' : '' %>">
+                <li><a href="<%= path === '/adminDashboard' ? '#courses-section' : '/adminDashboard#courses-section' %>" class="<%= title === 'Courses' ? 'active' : '' %>">
                     <i class="fas fa-book"></i> <span>Courses</span>
                 </a></li>
-                <li><a href="#announcements-section" class="<%= title === 'Announcements' ? 'active' : '' %>">
+                <li><a href="<%= path === '/adminDashboard' ? '#announcements-section' : '/adminDashboard#announcements-section' %>" class="<%= title === 'Announcements' ? 'active' : '' %>">
                     <i class="fas fa-bullhorn"></i> <span>Announcements</span>
                 </a></li>
-                <li><a href="#settings-section" class="<%= title === 'Settings' ? 'active' : '' %>">
+                <li><a href="<%= path === '/adminDashboard' ? '#settings-section' : '/adminDashboard#settings-section' %>" class="<%= title === 'Settings' ? 'active' : '' %>">
                     <i class="fas fa-cog"></i> <span>Settings</span>
                 </a></li>
             <% } else if (user.role === 'staff') { %>
-                <li><a href="/staffDashboard" class="<%= title === 'Dashboard' ? 'active' : '' %>">
+                <li><a href="<%= path === '/staffDashboard' ? '#' : '/staffDashboard' %>" class="<%= title === 'Dashboard' || title === 'Staff Dashboard' ? 'active' : '' %>">
                     <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                 </a></li>
-                <li><a href="#courses-section" class="<%= title === 'Courses' ? 'active' : '' %>">
+                <li><a href="<%= path === '/staffDashboard' ? '#courses-section' : '/staffDashboard#courses-section' %>" class="<%= title === 'Courses' ? 'active' : '' %>">
                     <i class="fas fa-book"></i> <span>Courses</span>
                 </a></li>
-                <li><a href="#students-section" class="<%= title === 'Students' ? 'active' : '' %>">
+                <li><a href="<%= path === '/staffDashboard' ? '#students-section' : '/staffDashboard#students-section' %>" class="<%= title === 'Students' ? 'active' : '' %>">
                     <i class="fas fa-user-graduate"></i> <span>Students</span>
                 </a></li>
-                <li><a href="/announcements" class="<%= title === 'Announcements' ? 'active' : '' %>">
+                <li><a href="<%= path === '/staffDashboard' ? '#announcements-section' : '/staffDashboard#announcements-section' %>" class="<%= title === 'Announcements' ? 'active' : '' %>">
                     <i class="fas fa-bullhorn"></i> <span>Announcements</span>
                 </a></li>
                 <li><a href="/profile" class="nav-link">
                     <i class="fas fa-user nav-icon"></i>Profile
                 </a></li>
             <% } else if (user.role === 'student') { %>
-                <li><a href="/studentDashboard" class="<%= title === 'Dashboard' ? 'active' : '' %>">
+                <li><a href="<%= path === '/studentDashboard' ? '#' : '/studentDashboard' %>" class="<%= title === 'Dashboard' || title === 'Student Dashboard' ? 'active' : '' %>">
                     <i class="fas fa-tachometer-alt"></i> <span>Dashboard</span>
                 </a></li>
-                <li><a href="#courses-section" class="<%= title === 'Courses' ? 'active' : '' %>">
+                <li><a href="<%= path === '/studentDashboard' ? '#courses-section' : '/studentDashboard#courses-section' %>" class="<%= title === 'Courses' ? 'active' : '' %>">
                     <i class="fas fa-book"></i> <span>Courses</span>
                 </a></li>
-                <li><a href="#grades-section" class="<%= title === 'Grades' ? 'active' : '' %>">
+                <li><a href="<%= path === '/studentDashboard' ? '#grades-section' : '/studentDashboard#grades-section' %>" class="<%= title === 'Grades' ? 'active' : '' %>">
                     <i class="fas fa-chart-line"></i> <span>Grades</span>
                 </a></li>
-                <li><a href="/announcements" class="<%= title === 'Announcements' ? 'active' : '' %>">
+                <li><a href="<%= path === '/studentDashboard' ? '#announcements-section' : '/studentDashboard#announcements-section' %>" class="<%= title === 'Announcements' ? 'active' : '' %>">
                     <i class="fas fa-bullhorn"></i> <span>Announcements</span>
                 </a></li>
                 <li><a href="/profile" class="nav-link">
