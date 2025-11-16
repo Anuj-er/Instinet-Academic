@@ -24,10 +24,10 @@ const authenticateUser = async (req, res, next) => {
 const isAdmin = (req, res, next) => req.user?.role === 'admin' ? next() : res.status(403).render('error', { title: 'Access Denied', message: 'You do not have permission to access this resource.', error: null });
 const isStaff = (req, res, next) => {
     console.log('Checking staff role:', req.user);
-    if (req.user && req.user.role === 'staff') {
+    if (req.user && (req.user.role === 'staff' || req.user.role === 'admin')) {
         next();
     } else {
-        req.flash('error', 'Access denied. Staff only.');
+        req.flash('error', 'Access denied. Staff or Admin only.');
         res.redirect('/login');
     }
 };

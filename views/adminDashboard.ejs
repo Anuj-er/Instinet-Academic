@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> - InstiNet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -61,143 +62,208 @@
                 </div>
             </div>
             
-            <div id="users-section" class="dashboard-section">
-                <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">Users Management</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-outline"><i class="fas fa-filter"></i> Filter</button>
+            <!-- Two Column Grid: Users Management & Announcements -->
+            <div class="dashboard-grid-2col">
+                <!-- Users Management -->
+                <div id="users-section" class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2 class="dashboard-section-title"><i class="fas fa-users"></i> Users Management</h2>
+                        <div class="section-actions">
+                            <button class="btn btn-outline btn-sm"><i class="fas fa-filter"></i></button>
+                        </div>
+                    </div>
+                    
+                    <div class="users-table-container">
+                        <table class="dashboard-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-table-body">
+                                <% if (users && users.length > 0) { %>
+                                    <% users.forEach(user => { %>
+                                        <tr>
+                                            <td>
+                                                <div class="user-cell">
+                                                    <strong><%= user.firstName %> <%= user.lastName %></strong>
+                                                    <small><%= user.email %></small>
+                                                </div>
+                                            </td>
+                                            <td><span class="badge badge-<%= user.role %>"><%= user.role %></span></td>
+                                            <td>
+                                                <% if (user.role === 'student' && user.studentDetails?.department) { %>
+                                                    <%= user.studentDetails.department %>
+                                                <% } else if (user.role === 'staff' && user.staffDetails?.department) { %>
+                                                    <%= user.staffDetails.department %>
+                                                <% } else if (user.role === 'admin' && user.adminDetails?.department) { %>
+                                                    <%= user.adminDetails.department %>
+                                                <% } else { %>
+                                                    -
+                                                <% } %>
+                                            </td>
+                                            <td class="table-actions">
+                                                <button class="btn-icon" data-action="view" data-id="<%= user._id %>" title="View"><i class="fas fa-eye"></i></button>
+                                                <button class="btn-icon" data-action="edit" data-id="<%= user._id %>" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" data-action="delete" data-id="<%= user._id %>" title="Delete"><i class="fas fa-trash"></i></button>
+                                            </td>
+                                        </tr>
+                                    <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="4" class="text-center">No users found</td>
+                                    </tr>
+                                <% } %>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Role</th>
-                            <th>Department</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="users-table-body">
-                        <% if (users && users.length > 0) { %>
-                            <% users.forEach(user => { %>
-                                <tr>
-                                    <td><%= user.firstName %> <%= user.lastName %></td>
-                                    <td><%= user.email %></td>
-                                    <td><span class="badge bg-info"><%= user.role %></span></td>
-                                    <td>
-                                        <% if (user.role === 'student' && user.studentDetails?.department) { %>
-                                            <%= user.studentDetails.department %>
-                                        <% } else if (user.role === 'staff' && user.staffDetails?.department) { %>
-                                            <%= user.staffDetails.department %>
-                                        <% } else if (user.role === 'admin' && user.adminDetails?.department) { %>
-                                            <%= user.adminDetails.department %>
-                                        <% } else { %>
-                                            -
-                                        <% } %>
-                                    </td>
-                                    <td><span class="status status-active">Active</span></td>
-                                    <td class="table-actions">
-                                        <button class="action-view" data-action="view" data-id="<%= user._id %>"><i class="fas fa-eye"></i></button>
-                                        <button class="action-edit" data-action="edit" data-id="<%= user._id %>"><i class="fas fa-edit"></i></button>
-                                        <button class="action-delete" data-action="delete" data-id="<%= user._id %>"><i class="fas fa-trash"></i></button>
-                                    </td>
-                                </tr>
+                <!-- Announcements -->
+                <div id="announcements-section" class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2 class="dashboard-section-title"><i class="fas fa-bullhorn"></i> Announcements</h2>
+                        <div class="section-actions">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
+                                <i class="fas fa-plus"></i> New
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="announcements-list">
+                        <% if (announcements && announcements.length > 0) { %>
+                            <% announcements.forEach(announcement => { %>
+                                <div class="announcement-item">
+                                    <div class="announcement-header">
+                                        <h3 class="announcement-title"><%= announcement.title %></h3>
+                                        <div class="announcement-meta">
+                                            <span class="announcement-author">
+                                                <i class="fas fa-user"></i> <%= announcement.createdBy ? `${announcement.createdBy.firstName} ${announcement.createdBy.lastName}` : 'Admin' %>
+                                            </span>
+                                            <span class="announcement-date">
+                                                <i class="fas fa-clock"></i> <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="announcement-content">
+                                        <p><%= announcement.message %></p>
+                                    </div>
+                                </div>
                             <% }); %>
                         <% } else { %>
-                            <tr>
-                                <td colspan="6" class="text-center">No users found</td>
-                            </tr>
+                            <div class="empty-state">
+                                <i class="fas fa-inbox fa-3x"></i>
+                                <p>No announcements at this time.</p>
+                            </div>
                         <% } %>
-                    </tbody>
-                </table>
+                    </div>
+                </div>
             </div>
             
+            <!-- Courses Section -->
             <div id="courses-section" class="dashboard-section">
                 <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">Courses</h2>
+                    <h2 class="dashboard-section-title"><i class="fas fa-book"></i> Courses</h2>
                     <div class="section-actions">
-                        <button class="btn btn-primary"><i class="fas fa-plus"></i> Add Course</button>
+                        <button class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Add Course</button>
                     </div>
                 </div>
                 
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Course Name</th>
-                            <th>Instructor</th>
-                            <th>Duration</th>
-                            <th>Students</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Computer Science</td>
-                            <td>Dr. Smith</td>
-                            <td>4 years</td>
-                            <td>64</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="1"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="1"><i class="fas fa-edit"></i></button>
-                                <button class="action-delete" data-action="delete" data-id="1"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Information Technology</td>
-                            <td>Prof. Johnson</td>
-                            <td>3 years</td>
-                            <td>48</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="2"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="2"><i class="fas fa-edit"></i></button>
-                                <button class="action-delete" data-action="delete" data-id="2"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Electronics Engineering</td>
-                            <td>Dr. Williams</td>
-                            <td>4 years</td>
-                            <td>42</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="3"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="3"><i class="fas fa-edit"></i></button>
-                                <button class="action-delete" data-action="delete" data-id="3"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Data Science</td>
-                            <td>Prof. Brown</td>
-                            <td>2 years</td>
-                            <td>36</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="4"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="4"><i class="fas fa-edit"></i></button>
-                                <button class="action-delete" data-action="delete" data-id="4"><i class="fas fa-trash"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <div id="announcements-section" class="dashboard-section">
-                <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">Announcements</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-primary"><i class="fas fa-plus"></i> New Announcement</button>
-                    </div>
-                </div>
-                
-                <div class="announcements-list">
-                    <!-- Announcement data will be loaded here via JavaScript -->
-                    <p>Loading announcements...</p>
+                <div class="courses-table-container">
+                    <table class="dashboard-table">
+                        <thead>
+                            <tr>
+                                <th>Course Name</th>
+                                <th>Instructor</th>
+                                <th>Duration</th>
+                                <th>Students</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Computer Science</strong></td>
+                                <td>Dr. Smith</td>
+                                <td>4 years</td>
+                                <td><span class="badge badge-success">64</span></td>
+                                <td class="table-actions">
+                                    <button class="btn-icon" data-action="view" data-id="1"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-icon" data-action="edit" data-id="1"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" data-action="delete" data-id="1"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Information Technology</strong></td>
+                                <td>Prof. Johnson</td>
+                                <td>3 years</td>
+                                <td><span class="badge badge-success">48</span></td>
+                                <td class="table-actions">
+                                    <button class="btn-icon" data-action="view" data-id="2"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-icon" data-action="edit" data-id="2"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" data-action="delete" data-id="2"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Electronics Engineering</strong></td>
+                                <td>Dr. Williams</td>
+                                <td>4 years</td>
+                                <td><span class="badge badge-success">42</span></td>
+                                <td class="table-actions">
+                                    <button class="btn-icon" data-action="view" data-id="3"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-icon" data-action="edit" data-id="3"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" data-action="delete" data-id="3"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Data Science</strong></td>
+                                <td>Prof. Brown</td>
+                                <td>2 years</td>
+                                <td><span class="badge badge-success">36</span></td>
+                                <td class="table-actions">
+                                    <button class="btn-icon" data-action="view" data-id="4"><i class="fas fa-eye"></i></button>
+                                    <button class="btn-icon" data-action="edit" data-id="4"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon" data-action="delete" data-id="4"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- Create Announcement Modal -->
+    <div class="modal fade" id="createAnnouncementModal" tabindex="-1" aria-labelledby="createAnnouncementModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <form action="/announcements/create" method="POST" class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createAnnouncementModalLabel">New Announcement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="title" class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" id="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Message</label>
+                        <textarea class="form-control" name="message" id="message" rows="4" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Create Announcement</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Socket.io Client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/main.js"></script>
     <script>
@@ -243,6 +309,53 @@
             document.querySelectorAll('.table-actions button').forEach(button => {
                 button.addEventListener('click', handleTableAction);
             });
+            
+            // Socket.io real-time announcements for admin dashboard
+            if (typeof io !== 'undefined') {
+                const socket = io();
+                
+                socket.on('newAnnouncement', (announcement) => {
+                    console.log('🔔 New announcement received on admin dashboard:', announcement);
+                    
+                    // Prepend new announcement to the list
+                    const announcementsList = document.querySelector('.announcements-list');
+                    if (announcementsList) {
+                        const firstP = announcementsList.querySelector('p');
+                        if (firstP && firstP.textContent === 'No announcements at this time.') {
+                            firstP.remove();
+                        }
+                        
+                        const announcementItem = document.createElement('div');
+                        announcementItem.className = 'announcement-item new-announcement';
+                        announcementItem.style.animation = 'fadeIn 0.5s ease-out';
+                        
+                        const createdDate = new Date(announcement.createdAt).toLocaleDateString();
+                        const creatorName = announcement.createdBy 
+                            ? `${announcement.createdBy.firstName} ${announcement.createdBy.lastName}` 
+                            : 'Admin';
+                        
+                        announcementItem.innerHTML = `
+                            <div class="announcement-header">
+                                <h3 class="announcement-title">${announcement.title}</h3>
+                                <div class="announcement-meta">
+                                    <span class="announcement-author">By ${creatorName}</span>
+                                    <span class="announcement-date">${createdDate}</span>
+                                </div>
+                            </div>
+                            <div class="announcement-content">
+                                <p>${announcement.message}</p>
+                            </div>
+                        `;
+                        
+                        announcementsList.insertBefore(announcementItem, announcementsList.firstChild);
+                        
+                        // Remove highlight after 3 seconds
+                        setTimeout(() => {
+                            announcementItem.classList.remove('new-announcement');
+                        }, 3000);
+                    }
+                });
+            }
         });
     </script>
 </body>

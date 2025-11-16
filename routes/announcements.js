@@ -24,10 +24,7 @@ router.post('/create', authenticateUser, isStaff, (req, res, next) => {
     next();
 }, announcementController.createAnnouncement);
 
-// All users view announcements
-router.get('/', authenticateUser, announcementController.getAllAnnouncements);
-
-// View single announcement
+// View single announcement (kept for direct access if needed)
 router.get('/:id', authenticateUser, announcementController.getAnnouncement);
 
 // Test route

@@ -8,7 +8,8 @@ exports.createAnnouncement = async (req, res) => {
       
       if (!title || !message) {
           req.flash('error', 'Title and message are required');
-          return res.redirect('/staffDashboard');
+          const redirectPath = req.user.role === 'admin' ? '/adminDashboard' : '/staffDashboard';
+          return res.redirect(redirectPath);
       }
 
       const announcement = await Announcement.create({
@@ -29,65 +30,25 @@ exports.createAnnouncement = async (req, res) => {
         console.error('Cache invalidation error:', err.message);
       }
       
+      // Broadcast new announcement via WebSocket
+      const io = req.app.get('socketio');
+      if (io) {
+        const populatedAnnouncement = await Announcement.findById(announcement._id)
+          .populate('createdBy', 'firstName lastName role');
+        io.emit('newAnnouncement', populatedAnnouncement);
+        console.log('🔔 WebSocket: New announcement broadcasted');
+      }
+      
       req.flash('success', 'Announcement created successfully!');
-      res.redirect('/staffDashboard');
+      const redirectPath = req.user.role === 'admin' ? '/adminDashboard' : '/staffDashboard';
+      res.redirect(redirectPath);
   } catch (err) {
       console.error('Error creating announcement:', err);
       req.flash('error', 'Failed to create announcement');
-      res.redirect('/staffDashboard');
+      const redirectPath = req.user.role === 'admin' ? '/adminDashboard' : '/staffDashboard';
+      res.redirect(redirectPath);
   }
 };
-exports.getAllAnnouncements = async (req, res) => {
-  try {
-    // Try to get from cache first
-    if (redisClient.isReady) {
-      try {
-        const cached = await redisClient.get('announcements:list');
-        if (cached) {
-          console.log('✅ [Cache HIT] Announcements served from Redis');
-          const announcements = JSON.parse(cached);
-          return res.render('announcements', { 
-            user: req.user, 
-            announcements, 
-            title: 'Announcements',
-            success: req.flash('success'),
-            error: req.flash('error')
-          });
-        }
-        console.log('ℹ️ [Cache MISS] Fetching announcements from MongoDB');
-      } catch (cacheErr) {
-        console.error('Cache read error:', cacheErr.message);
-      }
-    }
-    
-    // Cache miss or Redis not available - fetch from database
-    const announcements = await Announcement.find()
-      .sort({ createdAt: -1 })
-      .populate('createdBy', 'firstName lastName role');
-    
-    // Store in cache for 5 minutes (300 seconds)
-    if (redisClient.isReady) {
-      try {
-        await redisClient.setEx('announcements:list', 300, JSON.stringify(announcements));
-        console.log('✅ [Cache SET] Cached announcements for 5 minutes');
-      } catch (cacheErr) {
-        console.error('Cache write error:', cacheErr.message);
-      }
-    }
-    
-    res.render('announcements', { 
-      user: req.user, 
-      announcements, 
-      title: 'Announcements',
-      success: req.flash('success'),
-      error: req.flash('error')
-    });
-  } catch (err) {
-    req.flash('error', 'Failed to fetch announcements');
-    res.redirect('/staffDashboard');
-  }
-};
-
 exports.getAnnouncement = async (req, res) => {
   try {
     const announcement = await Announcement.findById(req.params.id)

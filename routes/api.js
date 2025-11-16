@@ -4,6 +4,7 @@ const fs = require('fs');
 const router = express.Router();
 const { authenticateUser, isAdmin } = require('../middleware/auth');
 const User = require('../models/User');
+const Announcement = require('../models/Announcement');
 
 // API route to get current user data
 router.get('/current-user', authenticateUser, (req, res) => {
@@ -25,14 +26,25 @@ router.get('/courses', (req, res) => {
 });
 
 // API route to get announcements
-router.get('/announcements', (req, res) => {
-  res.status(200).json({
-    announcements: [
-      { id: 1, title: 'Holiday Notice', content: 'Institute will be closed on Monday for National Holiday', date: '2025-05-01' },
-      { id: 2, title: 'Exam Schedule', content: 'Final exams will start from June 15th', date: '2025-05-05' },
-      { id: 3, title: 'Workshop Announcement', content: 'AI Workshop on May 20th', date: '2025-05-10' }
-    ]
-  });
+router.get('/announcements', authenticateUser, async (req, res) => {
+  try {
+    const announcements = await Announcement.find()
+      .sort({ createdAt: -1 })
+      .populate('createdBy', 'firstName lastName role')
+      .lean();
+    
+    res.status(200).json({
+      success: true,
+      announcements: announcements
+    });
+  } catch (error) {
+    console.error('Error fetching announcements:', error);
+    res.status(500).json({
+      success: false,
+      announcements: [],
+      error: 'Failed to fetch announcements'
+    });
+  }
 });
 
 // API route to get users (admin only)

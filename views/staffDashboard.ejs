@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %> - InstiNet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link rel="stylesheet" href="/css/style.css">
 </head>
@@ -72,157 +73,166 @@
                 </div>
             </div>
             
-            <div id="courses-section" class="dashboard-section">
-                <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">My Courses</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-outline"><i class="fas fa-filter"></i> Filter</button>
+            <!-- Courses and Announcements Side by Side -->
+            <div class="dashboard-grid-2col">
+                <div id="courses-section" class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2 class="dashboard-section-title"><i class="fas fa-book"></i> My Courses</h2>
+                        <div class="section-actions">
+                            <select class="filter-select" id="courseFilter">
+                                <option value="all">All Courses</option>
+                                <option value="active">Active</option>
+                                <option value="completed">Completed</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="courses-list">
+                        <div class="course-card-compact">
+                            <div class="course-card-header">
+                                <div class="course-icon-small"><i class="fas fa-code"></i></div>
+                                <div class="course-info">
+                                    <h4>Introduction to Programming</h4>
+                                    <p class="course-schedule"><i class="fas fa-clock"></i> Mon, Wed, Fri - 10:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="course-card-footer">
+                                <span class="badge badge-success">Active</span>
+                                <span class="student-count"><i class="fas fa-users"></i> 32 students</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-card-compact">
+                            <div class="course-card-header">
+                                <div class="course-icon-small"><i class="fas fa-database"></i></div>
+                                <div class="course-info">
+                                    <h4>Data Structures</h4>
+                                    <p class="course-schedule"><i class="fas fa-clock"></i> Tue, Thu - 1:00 PM</p>
+                                </div>
+                            </div>
+                            <div class="course-card-footer">
+                                <span class="badge badge-success">Active</span>
+                                <span class="student-count"><i class="fas fa-users"></i> 28 students</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-card-compact">
+                            <div class="course-card-header">
+                                <div class="course-icon-small"><i class="fas fa-laptop-code"></i></div>
+                                <div class="course-info">
+                                    <h4>Web Development</h4>
+                                    <p class="course-schedule"><i class="fas fa-clock"></i> Mon, Wed - 3:00 PM</p>
+                                </div>
+                            </div>
+                            <div class="course-card-footer">
+                                <span class="badge badge-success">Active</span>
+                                <span class="student-count"><i class="fas fa-users"></i> 24 students</span>
+                            </div>
+                        </div>
+                        
+                        <div class="course-card-compact">
+                            <div class="course-card-header">
+                                <div class="course-icon-small"><i class="fas fa-server"></i></div>
+                                <div class="course-info">
+                                    <h4>Database Management</h4>
+                                    <p class="course-schedule"><i class="fas fa-clock"></i> Fri - 9:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="course-card-footer">
+                                <span class="badge badge-success">Active</span>
+                                <span class="student-count"><i class="fas fa-users"></i> 22 students</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Course Name</th>
-                            <th>Schedule</th>
-                            <th>Students</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Introduction to Programming</td>
-                            <td>Mon, Wed, Fri - 10:00 AM</td>
-                            <td>32</td>
-                            <td><span class="status status-active">Active</span></td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="101"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="101"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Data Structures</td>
-                            <td>Tue, Thu - 1:00 PM</td>
-                            <td>28</td>
-                            <td><span class="status status-active">Active</span></td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="102"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="102"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Web Development</td>
-                            <td>Mon, Wed - 3:00 PM</td>
-                            <td>24</td>
-                            <td><span class="status status-active">Active</span></td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="103"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="103"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Database Management</td>
-                            <td>Fri - 9:00 AM</td>
-                            <td>22</td>
-                            <td><span class="status status-active">Active</span></td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="104"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="104"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            
-            <!-- <div id="students-section" class="dashboard-section">
-                <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">Students</h2>
-                    <div class="section-actions">
-                        <button class="btn btn-outline"><i class="fas fa-search"></i> Search</button>
+                <div id="announcements-section" class="dashboard-section">
+                    <div class="dashboard-section-header">
+                        <h2 class="dashboard-section-title"><i class="fas fa-bullhorn"></i> Announcements</h2>
+                        <div class="section-actions">
+                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
+                                <i class="fas fa-plus"></i> New
+                            </button>
+                        </div>
                     </div>
-                </div>
-                
-                <table class="dashboard-table">
-                    <thead>
-                        <tr>
-                            <th>Student Name</th>
-                            <th>Email</th>
-                            <th>Course</th>
-                            <th>Progress</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>John Doe</td>
-                            <td>john.doe@example.com</td>
-                            <td>Introduction to Programming</td>
-                            <td>85%</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="1001"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="1001"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Jane Smith</td>
-                            <td>jane.smith@example.com</td>
-                            <td>Data Structures</td>
-                            <td>92%</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="1002"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="1002"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Robert Johnson</td>
-                            <td>robert.j@example.com</td>
-                            <td>Web Development</td>
-                            <td>78%</td>
-                            <td class="table-actions">
-                                <button class="action-view" data-action="view" data-id="1003"><i class="fas fa-eye"></i></button>
-                                <button class="action-edit" data-action="edit" data-id="1003"><i class="fas fa-edit"></i></button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> -->
-            
-            <div id="announcements-section" class="dashboard-section">
-                <div class="dashboard-section-header">
-                    <h2 class="dashboard-section-title">Announcements</h2>
-                    <div class="section-actions">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
-                            <i class="fas fa-plus"></i> Create Announcement
-                        </button>
+                    
+                    <div class="announcements-list">
+                        <% if (announcements && announcements.length > 0) { %>
+                            <% announcements.forEach(announcement => { %>
+                                <div class="announcement-item">
+                                    <div class="announcement-header">
+                                        <h3 class="announcement-title"><%= announcement.title %></h3>
+                                        <div class="announcement-meta">
+                                            <span class="announcement-author">
+                                                <i class="fas fa-user"></i> <%= announcement.createdBy ? `${announcement.createdBy.firstName} ${announcement.createdBy.lastName}` : 'Staff' %>
+                                            </span>
+                                            <span class="announcement-date">
+                                                <i class="fas fa-calendar"></i> <%= new Date(announcement.createdAt).toLocaleDateString() %>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="announcement-content">
+                                        <p><%= announcement.message %></p>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="empty-state">No announcements at this time.</p>
+                        <% } %>
                     </div>
-                </div>
-                
-                <div class="announcements-list">
-                    <!-- Announcement data will be loaded here via JavaScript -->
-                    <p>Loading announcements...</p>
                 </div>
             </div>
 
-            <div class="dashboard-section">
-                <h2>All Students</h2>
-                <div class="row row-cols-1 row-cols-md-2 g-4">
+            <!-- Students Section -->
+            <div id="students-section" class="dashboard-section">
+                <div class="dashboard-section-header">
+                    <h2 class="dashboard-section-title"><i class="fas fa-user-graduate"></i> All Students</h2>
+                    <div class="section-actions">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="studentSearch" placeholder="Search students...">
+                        </div>
+                        <select class="filter-select" id="departmentFilter">
+                            <option value="all">All Departments</option>
+                            <option value="CS">Computer Science</option>
+                            <option value="IT">Information Technology</option>
+                            <option value="ECE">Electronics</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="students-grid" id="studentsGrid">
                     <% students.forEach(student => { %>
-                        <div class="col">
-                            <div class="card shadow-sm">
-                                <div class="card-body">
-                                    <h5><%= student.firstName %> <%= student.lastName %> (<%= student.studentDetails?.enrollmentNumber || '-' %>)</h5>
-                                    <p>Department: <%= student.studentDetails?.department || '-' %></p>
-                                    <p>Courses:</p>
-                                    <ul>
-                                        <% student.courses.forEach(course => { %>
-                                            <li><%= course.courseName %></li>
-                                        <% }) %>
-                                    </ul>
+                        <div class="student-card" data-department="<%= student.studentDetails?.department || 'N/A' %>">
+                            <div class="student-avatar">
+                                <%= student.firstName.charAt(0) %><%= student.lastName.charAt(0) %>
+                            </div>
+                            <div class="student-info">
+                                <h4><%= student.firstName %> <%= student.lastName %></h4>
+                                <p class="student-id"><i class="fas fa-id-badge"></i> <%= student.studentDetails?.enrollmentNumber || 'N/A' %></p>
+                                <p class="student-dept"><i class="fas fa-building"></i> <%= student.studentDetails?.department || 'N/A' %></p>
+                            </div>
+                            <div class="student-courses">
+                                <span class="courses-label"><i class="fas fa-book"></i> Courses (<%= student.courses.length %>)</span>
+                                <div class="courses-dropdown">
+                                    <% if (student.courses.length > 0) { %>
+                                        <% student.courses.slice(0, 3).forEach(course => { %>
+                                            <span class="course-tag"><%= course.courseName %></span>
+                                        <% }); %>
+                                        <% if (student.courses.length > 3) { %>
+                                            <span class="course-tag-more">+<%= student.courses.length - 3 %> more</span>
+                                        <% } %>
+                                    <% } else { %>
+                                        <span class="no-courses">No courses enrolled</span>
+                                    <% } %>
                                 </div>
                             </div>
+                            <div class="student-actions">
+                                <button class="btn-icon" title="View Profile"><i class="fas fa-eye"></i></button>
+                                <button class="btn-icon" title="Send Message"><i class="fas fa-envelope"></i></button>
+                            </div>
                         </div>
-                    <% }) %>
+                    <% }); %>
                 </div>
             </div>
         </div>
@@ -257,6 +267,8 @@
         </div>
     </div>
     
+    <!-- Socket.io Client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="/js/main.js"></script>
@@ -272,6 +284,85 @@
                     e.preventDefault();
                     alert('Please fill in all fields');
                     return;
+                }
+            });
+        }
+        
+        // Student search functionality
+        const studentSearch = document.getElementById('studentSearch');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const studentCards = document.querySelectorAll('.student-card');
+        
+        function filterStudents() {
+            const searchTerm = studentSearch.value.toLowerCase();
+            const selectedDept = departmentFilter.value;
+            
+            studentCards.forEach(card => {
+                const studentName = card.querySelector('h4').textContent.toLowerCase();
+                const department = card.getAttribute('data-department');
+                
+                const matchesSearch = studentName.includes(searchTerm);
+                const matchesDept = selectedDept === 'all' || department === selectedDept;
+                
+                if (matchesSearch && matchesDept) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+        
+        if (studentSearch) {
+            studentSearch.addEventListener('input', filterStudents);
+        }
+        
+        if (departmentFilter) {
+            departmentFilter.addEventListener('change', filterStudents);
+        }
+        
+        // Socket.io real-time announcements for staff dashboard
+        if (typeof io !== 'undefined') {
+            const socket = io();
+            
+            socket.on('newAnnouncement', (announcement) => {
+                console.log('🔔 New announcement received on staff dashboard:', announcement);
+                
+                // Prepend new announcement to the list
+                const announcementsList = document.querySelector('.announcements-list');
+                if (announcementsList) {
+                    const firstP = announcementsList.querySelector('p.empty-state');
+                    if (firstP) {
+                        firstP.remove();
+                    }
+                    
+                    const announcementItem = document.createElement('div');
+                    announcementItem.className = 'announcement-item new-announcement';
+                    announcementItem.style.animation = 'fadeIn 0.5s ease-out';
+                    
+                    const createdDate = new Date(announcement.createdAt).toLocaleDateString();
+                    const creatorName = announcement.createdBy 
+                        ? `${announcement.createdBy.firstName} ${announcement.createdBy.lastName}` 
+                        : 'Staff';
+                    
+                    announcementItem.innerHTML = `
+                        <div class="announcement-header">
+                            <h3 class="announcement-title">${announcement.title}</h3>
+                            <div class="announcement-meta">
+                                <span class="announcement-author"><i class="fas fa-user"></i> ${creatorName}</span>
+                                <span class="announcement-date"><i class="fas fa-calendar"></i> ${createdDate}</span>
+                            </div>
+                        </div>
+                        <div class="announcement-content">
+                            <p>${announcement.message}</p>
+                        </div>
+                    `;
+                    
+                    announcementsList.insertBefore(announcementItem, announcementsList.firstChild);
+                    
+                    // Remove highlight after 3 seconds
+                    setTimeout(() => {
+                        announcementItem.classList.remove('new-announcement');
+                    }, 3000);
                 }
             });
         }
