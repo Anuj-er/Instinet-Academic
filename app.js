@@ -55,6 +55,7 @@ const pageRoutes = require('./routes/pages');
 const profileRoutes = require('./routes/profile');
 const apiRoutes = require('./routes/api');
 const announcementRoutes = require('./routes/announcements');
+const redisRoutes = require('./routes/redis');
 
 // Use routes
 app.use('/', authRoutes);
@@ -62,6 +63,7 @@ app.use('/', pageRoutes);
 app.use('/', profileRoutes);
 app.use('/api', apiRoutes);
 app.use('/announcements', announcementRoutes);
+app.use('/redis', redisRoutes);
 
 // Health check (simple for tests/monitoring)
 app.get('/health', (_req, res) => {
