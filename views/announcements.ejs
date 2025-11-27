@@ -17,7 +17,13 @@
     <% } %>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2>Announcements</h2>
+        <h2>Announcements 
+            <% if (typeof fromCache !== 'undefined' && fromCache) { %>
+                <span class="badge bg-success" style="font-size: 0.5em; vertical-align: middle;" title="Data served from Redis cache">
+                    <i class="fas fa-bolt"></i> Cached
+                </span>
+            <% } %>
+        </h2>
         <% if (user.role === 'staff') { %>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createAnnouncementModal">
                 <i class="fas fa-plus"></i> Create Announcement

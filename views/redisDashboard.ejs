@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %> - Instinet Academic</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+        
+        .dashboard-container {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header-section {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #212529;
+        }
+        
+        .cache-key {
+            font-family: 'Courier New', monospace;
+            color: #0d6efd;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .cache-content {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .cache-content pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+            word-break: break-all;
+            margin: 0;
+            color: #212529;
+        }
+        
+        .cache-item {
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .cache-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+            margin-bottom: 10px;
+        }
+        
+        .cache-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <div class="header-section d-flex justify-content-between align-items-center">
+            <div>
+                <h2 class="mb-2">Redis Cache Dashboard</h2>
+                <p class="text-muted mb-0">View and manage cached data</p>
+            </div>
+            <a href="/adminDashboard" class="btn btn-outline-secondary">← Back</a>
+        </div>
+
+        <!-- Status & Stats -->
+        <% if (connected && stats) { %>
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="text-muted small mb-2">Total Cache Keys</div>
+                        <div class="stat-value"><%= cacheData.length %></div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="text-muted small mb-2">Memory Used</div>
+                        <div class="stat-value" style="font-size: 1.3rem;"><%= stats.usedMemory %></div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="text-muted small mb-2">Connected Clients</div>
+                        <div class="stat-value"><%= stats.connectedClients %></div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="text-muted small mb-2">Connection Status</div>
+                        <span class="badge bg-success mt-2">Connected</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 mb-4">
+                <button class="btn btn-primary" onclick="window.location.reload()">
+                    🔄 Refresh
+                </button>
+                <button class="btn btn-danger" onclick="clearAllCache()">
+                    🗑️ Clear All Cache
+                </button>
+            </div>
+
+            <!-- Cache Data -->
+            <% if (cacheData.length > 0) { %>
+                <h5 class="mb-3">Cached Items (<%= cacheData.length %>)</h5>
+                
+                <% cacheData.forEach(function(item) { %>
+                    <div class="cache-item">
+                        <div class="cache-item-header">
+                            <div>
+                                <div class="cache-key mb-1"><%= item.key %></div>
+                                <div class="cache-meta">
+                                    <span><strong>Type:</strong> <%= item.type %></span>
+                                    <span><strong>TTL:</strong> <%= item.ttl %></span>
+                                    <span><strong>Size:</strong> <%= item.size %></span>
+                                </div>
+                            </div>
+                            <button class="btn btn-sm btn-danger" onclick="deleteKey('<%= item.key %>')">
+                                Delete
+                            </button>
+                        </div>
+                        
+                        <div class="cache-content">
+                            <strong class="text-muted d-block mb-2">Cached Content:</strong>
+                            <pre><%= item.fullContent || item.preview %></pre>
+                        </div>
+                    </div>
+                <% }); %>
+            <% } else { %>
+                <div class="text-center py-5">
+                    <h4 class="text-muted">No Cache Data</h4>
+                    <p class="text-muted">The Redis cache is currently empty.</p>
+                </div>
+            <% } %>
+        <% } else { %>
+            <div class="alert alert-danger">
+                <h5>Redis Connection Error</h5>
+                <p class="mb-0">Unable to connect to Redis server. Please check if Redis is running.</p>
+            </div>
+        <% } %>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function deleteKey(key) {
+            if (!confirm('Delete cache key: ' + key + '?')) return;
+            
+            try {
+                const response = await fetch('/redis/clear/' + encodeURIComponent(key), {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Cache key deleted successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function clearAllCache() {
+            if (!confirm('Clear ALL cache? This cannot be undone!')) return;
+            
+            try {
+                const response = await fetch('/redis/clear-all', {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('All cache cleared successfully!');
+                    window.location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

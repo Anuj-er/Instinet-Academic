@@ -5,6 +5,7 @@ const router = express.Router();
 const { authenticateUser, isAdmin } = require('../middleware/auth');
 const User = require('../models/User');
 const Announcement = require('../models/Announcement');
+const { redisClient } = require('../utils/redisClient');
 
 // API route to get current user data
 router.get('/current-user', authenticateUser, (req, res) => {
@@ -25,17 +26,50 @@ router.get('/courses', (req, res) => {
   });
 });
 
-// API route to get announcements
+// API route to get announcements with Redis caching
 router.get('/announcements', authenticateUser, async (req, res) => {
   try {
+    const cacheKey = 'announcements:list';
+    
+    // Try Redis cache first
+    if (redisClient.isReady) {
+      try {
+        const cachedData = await redisClient.get(cacheKey);
+        if (cachedData) {
+          const announcements = JSON.parse(cachedData);
+          console.log('✅ API Cache HIT: Announcements from Redis');
+          return res.status(200).json({
+            success: true,
+            announcements: announcements,
+            fromCache: true
+          });
+        }
+        console.log('❌ API Cache MISS: Fetching from database');
+      } catch (cacheErr) {
+        console.error('Redis cache read error:', cacheErr.message);
+      }
+    }
+    
+    // Fetch from database
     const announcements = await Announcement.find()
       .sort({ createdAt: -1 })
       .populate('createdBy', 'firstName lastName role')
       .lean();
     
+    // Store in Redis cache (5 minutes TTL)
+    if (redisClient.isReady) {
+      try {
+        await redisClient.setEx(cacheKey, 300, JSON.stringify(announcements));
+        console.log('💾 API: Stored announcements in Redis (TTL: 5 minutes)');
+      } catch (cacheErr) {
+        console.error('Redis cache write error:', cacheErr.message);
+      }
+    }
+    
     res.status(200).json({
       success: true,
-      announcements: announcements
+      announcements: announcements,
+      fromCache: false
     });
   } catch (error) {
     console.error('Error fetching announcements:', error);
