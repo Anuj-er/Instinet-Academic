@@ -1,9 +1,12 @@
 # Dependencies
-node_modules/
+node_modules
 
 # Environment variables
 .env
 .env.*
+
+# SSL Certificates (development only)
+*.pem
 
 # Logs
 logs/
