@@ -25,6 +25,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/tests', express.static(path.join(__dirname, 'tests')));
 
 // Session configuration (Redis caching implemented separately)
 app.use(session({
