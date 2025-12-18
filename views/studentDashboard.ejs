@@ -32,47 +32,35 @@
                         <i class="fas fa-book fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>4</h3>
+                        <h3><%= stats.enrolledCourses %></h3>
                         <p>Enrolled Courses</p>
-                    </div>
-                    <div class="stat-indicator positive">
-                        <i class="fas fa-arrow-up"></i> 1 new
                     </div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon warning">
-                        <i class="fas fa-tasks fa-2x"></i>
+                    <div class="stat-icon">
+                        <i class="fas fa-bullhorn fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>8</h3>
-                        <p>Pending Assignments</p>
-                    </div>
-                    <div class="stat-indicator negative">
-                        <i class="fas fa-arrow-up"></i> 2 this week
+                        <h3><%= stats.totalAnnouncements %></h3>
+                        <p>Announcements</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon success">
-                        <i class="fas fa-chart-line fa-2x"></i>
+                        <i class="fas fa-graduation-cap fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>85%</h3>
-                        <p>Average Grade</p>
-                    </div>
-                    <div class="stat-indicator positive">
-                        <i class="fas fa-arrow-up"></i> 3% increase
+                        <h3><%= user.studentDetails?.department || 'N/A' %></h3>
+                        <p>Department</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon info">
-                        <i class="fas fa-calendar-alt fa-2x"></i>
+                        <i class="fas fa-id-card fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>3</h3>
-                        <p>Upcoming Events</p>
-                    </div>
-                    <div class="stat-indicator">
-                        <span class="highlight">This week</span>
+                        <h3><%= user.studentDetails?.studentId || 'N/A' %></h3>
+                        <p>Student ID</p>
                     </div>
                 </div>
             </div>

@@ -55,11 +55,19 @@ exports.getStaffDashboard = async (req, res) => {
       .limit(10)
       .lean();
     
+    // Calculate stats for staff dashboard
+    const stats = {
+      totalStudents: students.length,
+      totalCourses: await Course.countDocuments(),
+      totalAnnouncements: await Announcement.countDocuments()
+    };
+    
     res.render('staffDashboard', {
       title: 'Staff Dashboard',
       user: req.user,
       students,
       announcements,
+      stats,
       error: req.flash('error'),
       success: req.flash('success'),
       path: req.path
@@ -82,11 +90,18 @@ exports.getStudentDashboard = async (req, res) => {
     .limit(10)
     .lean();
   
+  // Calculate stats for student dashboard
+  const stats = {
+    enrolledCourses: courses.length,
+    totalAnnouncements: announcements.length
+  };
+  
   res.render('studentDashboard', {
     title: 'Student Dashboard',
     user: req.user,
     courses,
     announcements,
+    stats,
     path: req.path
   });
 }; 
