@@ -18,7 +18,7 @@ exports.register = async (req, res) => {
     let userData = { firstName, lastName, email, password, role };
     if (role === 'student' && studentDetails) {
       userData.studentDetails = {
-        studentId: studentDetails.studentId,
+        enrollmentNumber: studentDetails.studentId,
         department: studentDetails.department
       };
     }
