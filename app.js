@@ -40,8 +40,8 @@ const sessionConfig = {
   }
 };
 
-// Use Redis for session storage if available
-if (redisClient.isReady) {
+// Use Redis for session storage if REDIS_URL is configured
+if (process.env.REDIS_URL) {
   sessionConfig.store = new RedisStore({
     client: redisClient,
     prefix: 'session:',
