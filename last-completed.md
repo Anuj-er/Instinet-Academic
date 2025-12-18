@@ -29,6 +29,29 @@
 - Shows Redis stats: memory usage, connected clients, uptime
 - Access: Admin Dashboard → "Redis Cache" button
 
+### 4. Browser-Based Integration Testing
+- Comprehensive test suite with 26+ automated tests
+- Interactive endpoint tester for manual API testing
+- Dark VS Code-style terminal theme
+- **Test Coverage:**
+  - API endpoints (health, courses, announcements)
+  - Redis caching system validation
+  - Page loading tests (home, login, register, dashboards)
+  - Static assets (CSS, JS, Socket.io)
+  - Performance benchmarks (response time)
+  - Security & authentication (role-based access)
+  - Error handling (404, error pages)
+  - Profile and announcement routes
+  - Admin user management
+- **Interactive Features:**
+  - Manual endpoint tester with method selection (GET, POST, PUT, DELETE)
+  - Request body and header customization
+  - Full response details (status, headers, data, duration)
+  - Quick-select from 40+ categorized endpoints
+  - Collapsible endpoint categories
+- Real-time test results with detailed metadata
+- Access: `https://localhost:8080/test-runner.html`
+
 ---
 
 ## 📂 Key Files Created/Modified
@@ -38,12 +61,14 @@
 - `routes/redis.js`
 - `views/redisDashboard.ejs`
 - `ssl/server.key` & `ssl/server.cert`
+- `tests/integration-tests.js` - Test framework and suites
+- `public/test-runner.html` - Test UI interface
 
 **Modified Files:**
 - `server.js` - HTTPS support
 - `controllers/announcementController.js` - Caching logic
 - `routes/api.js` - API caching
-- `app.js` - Redis routes
+- `app.js` - Redis routes + tests folder static serving
 - `views/adminDashboard.ejs` - Dashboard link
 
 ---
@@ -54,10 +79,13 @@
 - **Security:** HTTPS encrypted communication
 - **Monitoring:** Full visibility of cached data via dashboard
 - **Scalability:** Reduced database load
+- **Testing:** Comprehensive automated & manual testing suite
+- **Developer Experience:** Interactive endpoint testing and validation
 
 ---
 
 **Status:** ✅ Complete  
 **Server:** `https://localhost:8080`  
 **Admin Login:** `admin@instinet.edu` / `Admin@123`
+**Test Suite:** `https://localhost:8080/test-runner.html`
 

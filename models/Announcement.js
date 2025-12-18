@@ -7,4 +7,7 @@ const announcementSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+// Index for sorting announcements by date
+announcementSchema.index({ createdAt: -1 });
+
 module.exports = mongoose.model('Announcement', announcementSchema);

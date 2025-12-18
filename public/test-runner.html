@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integration Tests - Instinet Academic</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #252526;
+            border: 1px solid #3e3e42;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        .subtitle {
+            color: #858585;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #3e3e42;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: 1px solid #3e3e42;
+            background: #2d2d30;
+            color: #cccccc;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        button:hover {
+            background: #3e3e42;
+            border-color: #007acc;
+        }
+
+        .stats {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2d2d30;
+            border: 1px solid #3e3e42;
+            font-size: 14px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #858585;
+        }
+
+        .stat-value {
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .stat-value.total { color: #4fc1ff; }
+        .stat-value.passed { color: #89d185; }
+        .stat-value.failed { color: #f48771; }
+        .stat-value.pending { color: #d7ba7d; }
+
+        .test-suite {
+            margin-bottom: 25px;
+        }
+
+        .suite-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #2d2d30;
+            border-left: 3px solid #007acc;
+        }
+
+        .test-case {
+            padding: 12px 15px;
+            border-left: 2px solid #3e3e42;
+            margin-bottom: 8px;
+            background: #1e1e1e;
+        }
+
+        .test-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .test-status-icon {
+            font-size: 16px;
+            min-width: 20px;
+        }
+
+        .test-content {
+            flex: 1;
+        }
+
+        .test-name {
+            color: #d4d4d4;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .test-description {
+            font-size: 13px;
+            color: #858585;
+            margin-bottom: 5px;
+        }
+
+        .test-meta {
+            font-size: 12px;
+            color: #6a6a6a;
+            margin-top: 5px;
+        }
+
+        .status-pending .test-status-icon { color: #d7ba7d; }
+        .status-running .test-status-icon { color: #4fc1ff; }
+        .status-passed .test-status-icon { color: #89d185; }
+        .status-failed .test-status-icon { color: #f48771; }
+
+        .test-details {
+            margin-top: 8px;
+            padding: 10px;
+            background: #2d2d30;
+            border-left: 3px solid #3e3e42;
+            font-size: 12px;
+        }
+
+        .detail-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .detail-label {
+            color: #858585;
+            min-width: 100px;
+        }
+
+        .detail-value {
+            color: #d4d4d4;
+            word-break: break-all;
+        }
+
+        .error-message {
+            color: #f48771;
+            margin-top: 8px;
+            padding: 8px;
+            background: #2d2020;
+            border-left: 3px solid #f48771;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: #3e3e42;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #007acc;
+            transition: width 0.3s;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid #3e3e42;
+            border-radius: 50%;
+            border-top-color: #4fc1ff;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #2d2d30;
+            border: 1px solid #3e3e42;
+            font-size: 14px;
+        }
+
+        .summary-line {
+            margin-bottom: 5px;
+        }
+        
+        #endpointTester {
+            background-color: #252526;
+            padding: 20px;
+            border: 1px solid #3e3e42;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        
+        #endpointTester h2, #endpointTester h3 {
+            color: #4fc1ff;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+        
+        .endpoint-form {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #3e3e42;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            color: #d7ba7d;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            background-color: #252526;
+            border: 1px solid #3e3e42;
+            color: #cccccc;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .form-group textarea {
+            resize: vertical;
+        }
+        
+        #endpointResult {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            border: 1px solid #3e3e42;
+        }
+        
+        #endpointResultContent {
+            color: #cccccc;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        .endpoint-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+        }
+        
+        .endpoint-category {
+            background-color: #1e1e1e;
+            padding: 15px;
+            border-radius: 4px;
+            border: 1px solid #3e3e42;
+        }
+        
+        .endpoint-category h4 {
+            color: #d7ba7d;
+            margin-bottom: 10px;
+            font-size: 14px;
+            border-bottom: 1px solid #3e3e42;
+            padding-bottom: 5px;
+        }
+        
+        .endpoint-item {
+            padding: 8px;
+            margin: 5px 0;
+            background-color: #252526;
+            border: 1px solid #3e3e42;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 12px;
+            color: #89d185;
+        }
+        
+        .endpoint-item:hover {
+            background-color: #2d2d30;
+            border-color: #4fc1ff;
+        }
+    </style>
+    <script>
+        function toggleEndpointTester() {
+            const tester = document.getElementById('endpointTester');
+            tester.style.display = tester.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        function setEndpoint(method, endpoint) {
+            document.getElementById('methodSelect').value = method;
+            document.getElementById('endpointInput').value = endpoint;
+            document.getElementById('bodyGroup').style.display = ['POST', 'PUT'].includes(method) ? 'block' : 'none';
+            document.getElementById('endpointInput').focus();
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('methodSelect').addEventListener('change', function() {
+                const method = this.value;
+                document.getElementById('bodyGroup').style.display = ['POST', 'PUT'].includes(method) ? 'block' : 'none';
+            });
+        });
+        
+        async function testEndpoint() {
+            const method = document.getElementById('methodSelect').value;
+            const endpoint = document.getElementById('endpointInput').value;
+            const bodyText = document.getElementById('bodyInput').value;
+            const headersText = document.getElementById('headersInput').value;
+            
+            const resultDiv = document.getElementById('endpointResult');
+            const resultContent = document.getElementById('endpointResultContent');
+            
+            resultDiv.style.display = 'block';
+            resultContent.textContent = 'Testing endpoint...';
+            
+            try {
+                let headers = { 'Content-Type': 'application/json' };
+                if (headersText.trim()) {
+                    headers = { ...headers, ...JSON.parse(headersText) };
+                }
+                
+                const options = {
+                    method: method,
+                    headers: headers
+                };
+                
+                if (['POST', 'PUT'].includes(method) && bodyText.trim()) {
+                    options.body = bodyText;
+                }
+                
+                const startTime = Date.now();
+                const response = await fetch(endpoint, options);
+                const duration = Date.now() - startTime;
+                
+                const contentType = response.headers.get('content-type') || '';
+                let responseData;
+                
+                if (contentType.includes('application/json')) {
+                    responseData = await response.json();
+                } else if (contentType.includes('text/html')) {
+                    const html = await response.text();
+                    responseData = html.substring(0, 500) + (html.length > 500 ? '... (truncated)' : '');
+                } else {
+                    responseData = await response.text();
+                }
+                
+                const result = {
+                    status: response.status,
+                    statusText: response.statusText,
+                    duration: duration + 'ms',
+                    contentType: contentType,
+                    headers: Object.fromEntries(response.headers.entries()),
+                    data: responseData
+                };
+                
+                resultContent.textContent = JSON.stringify(result, null, 2);
+                resultContent.style.color = response.ok ? '#89d185' : '#f48771';
+            } catch (error) {
+                resultContent.textContent = 'Error: ' + error.message + '\n\n' + error.stack;
+                resultContent.style.color = '#f48771';
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Integration Test Suite</h1>
+        <p class="subtitle">Instinet Academic - Browser Integration Tests</p>
+
+        <div class="controls">
+            <button onclick="runAllTests()">Run All Tests</button>
+            <button onclick="clearResults()">Clear Results</button>
+            <button onclick="toggleEndpointTester()" style="background: #4fc1ff; color: #1e1e1e;">Endpoint Tester</button>
+        </div>
+
+        <div class="progress-bar" id="progressBar" style="display: none;">
+            <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+        </div>
+
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Total:</span>
+                <span class="stat-value total" id="totalTests">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Passed:</span>
+                <span class="stat-value passed" id="passedTests">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Failed:</span>
+                <span class="stat-value failed" id="failedTests">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Pending:</span>
+                <span class="stat-value pending" id="pendingTests">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Duration:</span>
+                <span class="stat-value" id="totalDuration" style="color: #d4d4d4;">0ms</span>
+            </div>
+        </div>
+
+        <div id="testResults"></div>
+        <div id="summary" class="summary" style="display: none;"></div>
+        
+        <!-- Endpoint Tester Section -->
+        <div id="endpointTester" style="display: none;">
+            <h2>Manual Endpoint Testing</h2>
+            <div class="endpoint-form">
+                <div class="form-group">
+                    <label>Method:</label>
+                    <select id="methodSelect">
+                        <option value="GET">GET</option>
+                        <option value="POST">POST</option>
+                        <option value="PUT">PUT</option>
+                        <option value="DELETE">DELETE</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Endpoint:</label>
+                    <input type="text" id="endpointInput" placeholder="/api/endpoint" value="/health">
+                </div>
+                <div class="form-group" id="bodyGroup" style="display: none;">
+                    <label>Request Body (JSON):</label>
+                    <textarea id="bodyInput" rows="5" placeholder='{"key": "value"}'></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Headers (JSON):</label>
+                    <textarea id="headersInput" rows="3" placeholder='{"Authorization": "Bearer token"}'></textarea>
+                </div>
+                <button onclick="testEndpoint()">Test Endpoint</button>
+            </div>
+            
+            <div id="endpointResult" style="display: none;">
+                <h3>Response:</h3>
+                <div id="endpointResultContent"></div>
+            </div>
+            
+            <h3>Available Endpoints:</h3>
+            <div class="endpoint-list">
+                <div class="endpoint-category">
+                    <h4>Public Routes</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/')">GET /</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/login')">GET /login</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/register')">GET /register</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/health')">GET /health</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Authentication</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/login')">POST /login</div>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/register')">POST /register</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/logout')">GET /logout</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>API Endpoints</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/api/courses')">GET /api/courses</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/api/current-user')">GET /api/current-user</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/api/announcements')">GET /api/announcements</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Dashboards (Requires Auth)</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/studentDashboard')">GET /studentDashboard</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/staffDashboard')">GET /staffDashboard</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/adminDashboard')">GET /adminDashboard</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Profile (Requires Auth)</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/profile')">GET /profile</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/profile/edit')">GET /profile/edit</div>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/profile/update')">POST /profile/update</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Announcements (Requires Auth)</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/announcements')">GET /announcements</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/announcements/:id')">GET /announcements/:id</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/announcements/create')">GET /announcements/create</div>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/announcements/create')">POST /announcements/create</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Redis Cache (Admin Only)</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/redis/dashboard')">GET /redis/dashboard</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/redis/stats')">GET /redis/stats</div>
+                    <div class="endpoint-item" onclick="setEndpoint('DELETE', '/redis/clear/:key')">DELETE /redis/clear/:key</div>
+                    <div class="endpoint-item" onclick="setEndpoint('DELETE', '/redis/clear-all')">DELETE /redis/clear-all</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Admin User Management</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/admin/users')">GET /admin/users</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/admin/users/:id')">GET /admin/users/:id</div>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/admin/users/:id/update')">POST /admin/users/:id/update</div>
+                    <div class="endpoint-item" onclick="setEndpoint('POST', '/admin/users/:id/delete')">POST /admin/users/:id/delete</div>
+                </div>
+                
+                <div class="endpoint-category">
+                    <h4>Static Assets</h4>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/css/style.css')">GET /css/style.css</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/js/main.js')">GET /js/main.js</div>
+                    <div class="endpoint-item" onclick="setEndpoint('GET', '/socket.io/socket.io.js')">GET /socket.io/socket.io.js</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/tests/integration-tests.js"></script>
+</body>
+</html>

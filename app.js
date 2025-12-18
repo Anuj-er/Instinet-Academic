@@ -6,6 +6,7 @@ const compression = require('compression');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
+const RedisStore = require('connect-redis').default;
 const flash = require('connect-flash');
 const { redisClient } = require('./utils/redisClient');
 
@@ -25,17 +26,33 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use('/tests', express.static(path.join(__dirname, 'tests')));
 
-// Session configuration (Redis caching implemented separately)
-app.use(session({
+// Session configuration with Redis store
+const sessionConfig = {
   secret: process.env.SESSION_SECRET || 'your-secret-key',
   resave: false,
   saveUninitialized: false,
   cookie: {
     secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
     maxAge: 24 * 60 * 60 * 1000 // 24 hours
   }
-}));
+};
+
+// Use Redis for session storage if REDIS_URL is configured
+if (process.env.REDIS_URL) {
+  sessionConfig.store = new RedisStore({
+    client: redisClient,
+    prefix: 'session:',
+    ttl: 86400 // 24 hours in seconds
+  });
+  console.log('✅ Session store: Redis (persistent)');
+} else {
+  console.log('⚠️  Session store: Memory (not persistent - sessions lost on restart)');
+}
+
+app.use(session(sessionConfig));
 
 // Flash messages
 app.use(flash());

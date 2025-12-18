@@ -30,7 +30,7 @@
                         <i class="fas fa-users fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>256</h3>
+                        <h3><%= stats.totalUsers %></h3>
                         <p>Total Users</p>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                         <i class="fas fa-user-graduate fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>198</h3>
+                        <h3><%= stats.students %></h3>
                         <p>Students</p>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                         <i class="fas fa-chalkboard-teacher fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>45</h3>
+                        <h3><%= stats.staff %></h3>
                         <p>Staff</p>
                     </div>
                 </div>
@@ -57,7 +57,7 @@
                         <i class="fas fa-book fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>24</h3>
+                        <h3><%= stats.courses %></h3>
                         <p>Courses</p>
                     </div>
                 </div>
@@ -178,57 +178,39 @@
                         <thead>
                             <tr>
                                 <th>Course Name</th>
+                                <th>Code</th>
+                                <th>Department</th>
                                 <th>Instructor</th>
-                                <th>Duration</th>
                                 <th>Students</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><strong>Computer Science</strong></td>
-                                <td>Dr. Smith</td>
-                                <td>4 years</td>
-                                <td><span class="badge badge-success">64</span></td>
-                                <td class="table-actions">
-                                    <button class="btn-icon" data-action="view" data-id="1"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-icon" data-action="edit" data-id="1"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" data-action="delete" data-id="1"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Information Technology</strong></td>
-                                <td>Prof. Johnson</td>
-                                <td>3 years</td>
-                                <td><span class="badge badge-success">48</span></td>
-                                <td class="table-actions">
-                                    <button class="btn-icon" data-action="view" data-id="2"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-icon" data-action="edit" data-id="2"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" data-action="delete" data-id="2"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Electronics Engineering</strong></td>
-                                <td>Dr. Williams</td>
-                                <td>4 years</td>
-                                <td><span class="badge badge-success">42</span></td>
-                                <td class="table-actions">
-                                    <button class="btn-icon" data-action="view" data-id="3"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-icon" data-action="edit" data-id="3"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" data-action="delete" data-id="3"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Data Science</strong></td>
-                                <td>Prof. Brown</td>
-                                <td>2 years</td>
-                                <td><span class="badge badge-success">36</span></td>
-                                <td class="table-actions">
-                                    <button class="btn-icon" data-action="view" data-id="4"><i class="fas fa-eye"></i></button>
-                                    <button class="btn-icon" data-action="edit" data-id="4"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" data-action="delete" data-id="4"><i class="fas fa-trash"></i></button>
-                                </td>
-                            </tr>
+                            <% if (courses && courses.length > 0) { %>
+                                <% courses.forEach(course => { %>
+                                    <tr>
+                                        <td><strong><%= course.courseName %></strong></td>
+                                        <td><%= course.code %></td>
+                                        <td><span class="badge badge-info"><%= course.department %></span></td>
+                                        <td><%= course.instructor || 'Not Assigned' %></td>
+                                        <td><span class="badge badge-success"><%= course.studentCount || 0 %></span></td>
+                                        <td class="table-actions">
+                                            <button class="btn-icon" title="View" data-action="view" data-id="<%= course._id %>"><i class="fas fa-eye"></i></button>
+                                            <button class="btn-icon" title="Edit" data-action="edit" data-id="<%= course._id %>"><i class="fas fa-edit"></i></button>
+                                            <button class="btn-icon" title="Delete" data-action="delete" data-id="<%= course._id %>"><i class="fas fa-trash"></i></button>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="6" class="text-center">
+                                        <div class="empty-state">
+                                            <i class="fas fa-book fa-2x"></i>
+                                            <p>No courses available. Add your first course!</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <% } %>
                         </tbody>
                     </table>
                 </div>

@@ -20,28 +20,30 @@ exports.createAnnouncement = async (req, res) => {
       
       console.log('Announcement created:', announcement); // Debug log
       
-      // Invalidate announcements cache
-      try {
-        if (redisClient.isReady) {
-          await redisClient.del('announcements:list');
+      // Invalidate announcements cache (don't await, let it run in background)
+      if (process.env.REDIS_URL && redisClient.isReady) {
+        redisClient.del('announcements:list').then(() => {
           console.log('✅ Cache invalidated: announcements:list');
-        }
-      } catch (err) {
-        console.error('Cache invalidation error:', err.message);
+        }).catch(err => {
+          console.error('Cache invalidation error:', err.message);
+        });
       }
       
-      // Broadcast new announcement via WebSocket
+      // Broadcast new announcement via WebSocket (don't await)
       const io = req.app.get('socketio');
       if (io) {
-        const populatedAnnouncement = await Announcement.findById(announcement._id)
-          .populate('createdBy', 'firstName lastName role');
-        io.emit('newAnnouncement', populatedAnnouncement);
-        console.log('🔔 WebSocket: New announcement broadcasted');
+        Announcement.findById(announcement._id)
+          .populate('createdBy', 'firstName lastName role')
+          .then(populatedAnnouncement => {
+            io.emit('newAnnouncement', populatedAnnouncement);
+            console.log('🔔 WebSocket: New announcement broadcasted');
+          })
+          .catch(err => console.error('WebSocket broadcast error:', err));
       }
       
       req.flash('success', 'Announcement created successfully!');
       const redirectPath = req.user.role === 'admin' ? '/adminDashboard' : '/staffDashboard';
-      res.redirect(redirectPath);
+      return res.redirect(redirectPath);
   } catch (err) {
       console.error('Error creating announcement:', err);
       req.flash('error', 'Failed to create announcement');

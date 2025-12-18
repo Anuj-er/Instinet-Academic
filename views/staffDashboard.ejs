@@ -40,8 +40,8 @@
                         <i class="fas fa-book fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>5</h3>
-                        <p>My Courses</p>
+                        <h3><%= stats.totalCourses %></h3>
+                        <p>Total Courses</p>
                     </div>
                 </div>
                 <div class="stat-card">
@@ -49,26 +49,26 @@
                         <i class="fas fa-user-graduate fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>124</h3>
+                        <h3><%= stats.totalStudents %></h3>
                         <p>Students</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-tasks fa-2x"></i>
+                        <i class="fas fa-bullhorn fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>15</h3>
-                        <p>Assignments</p>
+                        <h3><%= stats.totalAnnouncements %></h3>
+                        <p>Announcements</p>
                     </div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon">
-                        <i class="fas fa-calendar-alt fa-2x"></i>
+                        <i class="fas fa-users fa-2x"></i>
                     </div>
                     <div class="stat-details">
-                        <h3>8</h3>
-                        <p>Upcoming Events</p>
+                        <h3><%= students.length %></h3>
+                        <p>Managed Students</p>
                     </div>
                 </div>
             </div>
@@ -88,61 +88,32 @@
                     </div>
                     
                     <div class="courses-list">
-                        <div class="course-card-compact">
-                            <div class="course-card-header">
-                                <div class="course-icon-small"><i class="fas fa-code"></i></div>
-                                <div class="course-info">
-                                    <h4>Introduction to Programming</h4>
-                                    <p class="course-schedule"><i class="fas fa-clock"></i> Mon, Wed, Fri - 10:00 AM</p>
+                        <% if (courses && courses.length > 0) { %>
+                            <% courses.forEach(course => { %>
+                                <div class="course-card-compact">
+                                    <div class="course-card-header">
+                                        <div class="course-icon-small"><i class="fas fa-book"></i></div>
+                                        <div class="course-info">
+                                            <h4><%= course.courseName %></h4>
+                                            <p class="course-schedule">
+                                                <i class="fas fa-code"></i> <%= course.code %> | <%= course.department %>
+                                                <% if (course.schedule) { %>
+                                                    <br><i class="fas fa-clock"></i> <%= course.schedule %>
+                                                <% } %>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div class="course-card-footer">
+                                        <span class="badge badge-success">Active</span>
+                                        <% if (course.instructor) { %>
+                                            <span class="student-count"><i class="fas fa-user"></i> <%= course.instructor %></span>
+                                        <% } %>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="course-card-footer">
-                                <span class="badge badge-success">Active</span>
-                                <span class="student-count"><i class="fas fa-users"></i> 32 students</span>
-                            </div>
-                        </div>
-                        
-                        <div class="course-card-compact">
-                            <div class="course-card-header">
-                                <div class="course-icon-small"><i class="fas fa-database"></i></div>
-                                <div class="course-info">
-                                    <h4>Data Structures</h4>
-                                    <p class="course-schedule"><i class="fas fa-clock"></i> Tue, Thu - 1:00 PM</p>
-                                </div>
-                            </div>
-                            <div class="course-card-footer">
-                                <span class="badge badge-success">Active</span>
-                                <span class="student-count"><i class="fas fa-users"></i> 28 students</span>
-                            </div>
-                        </div>
-                        
-                        <div class="course-card-compact">
-                            <div class="course-card-header">
-                                <div class="course-icon-small"><i class="fas fa-laptop-code"></i></div>
-                                <div class="course-info">
-                                    <h4>Web Development</h4>
-                                    <p class="course-schedule"><i class="fas fa-clock"></i> Mon, Wed - 3:00 PM</p>
-                                </div>
-                            </div>
-                            <div class="course-card-footer">
-                                <span class="badge badge-success">Active</span>
-                                <span class="student-count"><i class="fas fa-users"></i> 24 students</span>
-                            </div>
-                        </div>
-                        
-                        <div class="course-card-compact">
-                            <div class="course-card-header">
-                                <div class="course-icon-small"><i class="fas fa-server"></i></div>
-                                <div class="course-info">
-                                    <h4>Database Management</h4>
-                                    <p class="course-schedule"><i class="fas fa-clock"></i> Fri - 9:00 AM</p>
-                                </div>
-                            </div>
-                            <div class="course-card-footer">
-                                <span class="badge badge-success">Active</span>
-                                <span class="student-count"><i class="fas fa-users"></i> 22 students</span>
-                            </div>
-                        </div>
+                            <% }); %>
+                        <% } else { %>
+                            <p class="empty-state">No courses available.</p>
+                        <% } %>
                     </div>
                 </div>
                 
