@@ -1,5 +1,5 @@
 const User = require('../models/User');
-const Course = require('../models/courses');
+const Course = require('../models/Courses');
 const Announcement = require('../models/Announcement');
 
 exports.getAdminDashboard = async (req, res) => {
